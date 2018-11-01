@@ -1,4 +1,4 @@
-package com.vit.Schedule.service;
+package com.vit.Schedule.util;
 
 import java.util.Properties;
 import java.io.FileInputStream;
