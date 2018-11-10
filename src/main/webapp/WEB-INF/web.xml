@@ -2,6 +2,14 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" version="4.0">
 	<display-name>Schedule Web App</display-name>
 	
+	<listener>
+		<listener-class>com.vit.Schedule.listener.Log4jConfigListener</listener-class>
+	</listener>
+	
+	<listener>
+		<listener-class>com.vit.Schedule.listener.DatabaseFiller</listener-class>
+	</listener>
+	
 	<context-param>
 	   <param-name>javax.servlet.jsp.jstl.fmt.request.charset</param-name>
 	   <param-value>UTF-8</param-value>

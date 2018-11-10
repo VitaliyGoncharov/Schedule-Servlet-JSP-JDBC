@@ -97,9 +97,15 @@ body {
 	color: white;
 	font-size: 1.15em;
 }
-
-
-.schedule-container td:hover {
+#schedule-container {
+	display: flex;
+	justify-content: center;
+}
+#schedule {
+	display: inline-block;
+	position: relative;
+}
+#schedule td:hover {
 	background-color: chartreuse;
 	cursor: pointer;
 }

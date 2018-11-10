@@ -7,7 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import com.vit.Schedule.model.School;
 import com.vit.Schedule.service.SchoolService;
@@ -15,7 +16,7 @@ import com.vit.Schedule.util.DbUtils;
 import com.vit.Schedule.util.JdbcConnection;
 
 public class SchoolServiceImpl implements SchoolService {
-	private static Logger log = Logger.getLogger(SchoolServiceImpl.class.getName());
+	private static Logger log = Logger.getLogger(SchoolServiceImpl.class);
 	
 	public SchoolServiceImpl() {
 	}

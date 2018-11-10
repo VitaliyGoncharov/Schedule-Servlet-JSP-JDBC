@@ -39,11 +39,11 @@ INSERT INTO teacher VALUES (3, 'Лидия','Мишунина','Николаев
 INSERT INTO teacher VALUES (4, 'Ольга','Карпец','Викторовна','karpets.ov@dvfu.ru')
 
 # (`id`, `subject`, `day_num`, `week`, `subject_num`, `major`, `group_id`, `teacher`, `lesson_type`, `classroom`)
-INSERT INTO schedule VALUES (1, 4, 1, 'down', 5, 1, 1, NULL, 'Л', 'G427')
-INSERT INTO schedule VALUES (2, 6, 1, 'down', 6, 1, 1, NULL, 'Л', 'G207')
+INSERT INTO schedule VALUES (1, 6, 1, 'down', 6, 1, 1, NULL, 'Л', 'G207')
+INSERT INTO schedule VALUES (2, 4, 1, 'down', 5, 1, 1, NULL, 'Л', 'G427')
 
-INSERT INTO schedule VALUES (3, 2, 2, 'up', 3, 1, 1, 4, 'П', 'G502')
-INSERT INTO schedule VALUES (4, 2, 2, 'down', 3, 1, 1, 4, 'П', 'G502')
+INSERT INTO schedule VALUES (3, 2, 2, 'down', 3, 1, 1, 4, 'П', 'G502')
+INSERT INTO schedule VALUES (4, 2, 2, 'up', 3, 1, 1, 4, 'П', 'G502')
 INSERT INTO schedule VALUES (5, 3, 2, 'up', 4, 1, 1, 3, 'П', 'G420')
 INSERT INTO schedule VALUES (6, 3, 2, 'down', 4, 1, 1, 3, 'П', 'G420')
 INSERT INTO schedule VALUES (7, 6, 2, 'up', 5, 1, 1, NULL, 'П', 'G420')

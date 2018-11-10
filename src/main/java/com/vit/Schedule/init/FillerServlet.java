@@ -1,4 +1,4 @@
-package com.vit.Schedule.servlet;
+package com.vit.Schedule.init;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -7,61 +7,90 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+
+import org.apache.log4j.Logger;
 
 import com.vit.Schedule.util.DbUtils;
 import com.vit.Schedule.util.FileUtils;
 import com.vit.Schedule.util.JdbcConnection;
 import com.vit.Schedule.util.Settings;
 
-public class MySQLFiller extends HttpServlet {
-	private static final long serialVersionUID = -3290792043438858315L;
-	
-	private static Logger log = Logger.getLogger(MySQLFiller.class.getName());
+
+public class FillerServlet extends HttpServlet {
+	private static final long serialVersionUID = 3008292447457493808L;
+	private static FillerServlet INSTANCE = new FillerServlet();
+	private static Logger log = Logger.getLogger(FillerServlet.class.getName());
 	private static final String SCHEMA_FILE = "schema.sql";
 	private static final String DATA_FILE = "data.sql";
+	private boolean isCreateAndDrop;
+	public boolean done = false;
 	
 	/**
 	 * For creating database and persisting data without launching Web App
 	 * 
 	 * @param args
-	 * @throws ServletException
+	 * @throws Exception 
 	 */
-	public static void main(String... args) throws ServletException {
-		MySQLFiller filler = new MySQLFiller();
+	public static void main(String... args) throws Exception {
+		FillerServlet filler = new FillerServlet();
 		filler.init();
 	}
-
-	public void init() throws ServletException {
-		Settings settings = Settings.getInstance();
-		String mode = settings.value("jdbc.mode");
-		
-		switch (mode.toLowerCase()) {
-			case "update":
-				dropTables();
-				createSchema();
-				populateWithData();
-				break;
-			case "create":
-				dropDatabase();
-				createDatabase();
-				createSchema();
-				populateWithData();
-				break;
-			case "create-drop":
-				createDatabase();
-				createSchema();
-				dropDatabase();
-				break;
-		}
-		log.info("Executed database operations using \"" + mode + "\" mode");
+	
+	private FillerServlet() {
 	}
 	
-	public void createSchema() {
+	public static FillerServlet getInstance() {
+		return INSTANCE;
+	}
+
+	public boolean isCreateAndDrop() {
+		return isCreateAndDrop;
+	}
+
+	public void init() {
+		Settings settings = Settings.getInstance();
+		String mode = settings.value("jdbc.mode");
+		log.info("Execute database operations using \"" + mode + "\" mode");
+		log.info("Started creating schema...");
+		
+		boolean isH2DB = settings.value("jdbc.url").contains("h2");
+		
+		try {
+			switch (mode.toLowerCase()) {
+				case "update":
+					populateWithData();
+					break;
+				case "create":
+					if (!isH2DB) {
+						dropDatabase();					
+						createDatabase();
+					}
+					createSchema();
+					populateWithData();
+					break;
+				case "create-drop":
+					isCreateAndDrop = true;
+					if (!isH2DB) {
+						dropDatabase();
+						createDatabase();
+					}
+					createSchema();
+					break;
+			}
+			
+			log.info("Schema was successfully created|Data was persisted");
+		} catch (Exception e) {
+			log.error("Schema creation was failed|Data persistence was failed!", e);
+			System.exit(-1);
+		}
+		
+		done = true;
+	}
+	
+	public void createSchema() throws Exception {
 		List<String> tablesSchemas = getTableSchemas();
 		
 		Connection connection = JdbcConnection.getConnection();
@@ -78,15 +107,16 @@ public class MySQLFiller extends HttpServlet {
 			
 			connection.commit();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Error while creating database schema", e);
 			try { connection.rollback(); } catch (SQLException ex) { }
+			throw e;
 		} finally {
 			DbUtils.closeQuietly(statement);
 			DbUtils.closeQuietly(connection);
 		}
 	}
 	
-	private void createDatabase() {
+	private void createDatabase() throws Exception {
 		Connection connection = JdbcConnection.getConnection("");
 		Statement statement = null;
 		
@@ -94,14 +124,15 @@ public class MySQLFiller extends HttpServlet {
 			statement = connection.createStatement();
 			statement.executeUpdate("CREATE DATABASE IF NOT EXISTS schedule");
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Couldn't create database", e);
+			throw e;
 		} finally {
 			DbUtils.closeQuietly(statement);
 			DbUtils.closeQuietly(connection);
 		}
 	}
 	
-	private void dropDatabase() {
+	public void dropDatabase() throws Exception {
 		Connection connection = JdbcConnection.getConnection("");
 		Statement statement = null;
 		
@@ -109,7 +140,8 @@ public class MySQLFiller extends HttpServlet {
 			statement = connection.createStatement();
 			statement.executeUpdate("DROP DATABASE IF EXISTS schedule");
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Couldn't drop database", e);
+			throw e;
 		} finally {
 			DbUtils.closeQuietly(statement);
 			DbUtils.closeQuietly(connection);
@@ -129,7 +161,7 @@ public class MySQLFiller extends HttpServlet {
 			.collect(Collectors.toList());
 	}
 	
-	private void populateWithData() {
+	private void populateWithData() throws Exception {
 		Connection connection = JdbcConnection.getConnection();
 		List<String> tablesData = getTablesData();
 		Statement statement = null;
@@ -142,15 +174,16 @@ public class MySQLFiller extends HttpServlet {
 			}
 			connection.commit();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Couldn't populate database with given data", e);
 			try { connection.rollback(); } catch (SQLException ex) {}
+			throw e;
 		} finally {
 			DbUtils.closeQuietly(statement);
 			DbUtils.closeQuietly(connection);
 		}
 	}
 	
-	private void dropTables() {
+	private void dropTables() throws Exception {
 		Connection connection = JdbcConnection.getConnection();
 		Statement statement = null;
 		
@@ -165,8 +198,9 @@ public class MySQLFiller extends HttpServlet {
 			statement.executeUpdate("DROP TABLE IF EXISTS school");
 			connection.commit();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Couldn't drop tables", e);
 			try { connection.rollback(); } catch (SQLException ex) {}
+			throw e;
 		} finally {
 			DbUtils.closeQuietly(statement);
 			DbUtils.closeQuietly(connection);

@@ -39,7 +39,7 @@ public class ScheduleServlet extends HttpServlet {
 		ScheduleService scheduleService = new ScheduleServiceImpl();
 		List<Schedule> schedules = scheduleService.findAllByGroup(group);
 		Map<Day, Map<Integer, Map<String, Map<String,String>>>> schedulesByDays = ScheduleUtils.mapToDays(schedules);
-		schedulesByDays = ScheduleUtils.sortByDay(schedulesByDays);
+		schedulesByDays = ScheduleUtils.sortByDay1(schedulesByDays);
 		request.setAttribute("schedulesByDays", schedulesByDays);
 		
 		Map<Integer, String> bellSchedule = new HashMap<>();
@@ -49,10 +49,8 @@ public class ScheduleServlet extends HttpServlet {
 		bellSchedule.put(4, "13.30-15.00");
 		bellSchedule.put(5, "15.10-16.40");
 		bellSchedule.put(6, "16.50-18.20");
-		
 		request.setAttribute("bellSchedule", bellSchedule);
 		
-		System.out.println(reqUrl);
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/schedule.jsp");
 		dispatcher.forward(request, response);
 	}

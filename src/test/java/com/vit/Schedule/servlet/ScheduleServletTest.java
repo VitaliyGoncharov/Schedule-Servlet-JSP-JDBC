@@ -25,7 +25,7 @@ public class ScheduleServletTest {
 		
 		ScheduleService scheduleService = new ScheduleServiceImpl();
 		List<Schedule> schedules = scheduleService.findAllByGroup(group);
-		Map<Day, Map<Integer, Map<String,String>>> schedulesByDay = ScheduleUtils.mapToDays(schedules);
+		Map<Day, Map<Integer, Map<String, Map<String, String>>>> schedulesByDay = ScheduleUtils.mapToDays(schedules);
 		
 		assertTrue(!schedulesByDay.isEmpty());
 	}
