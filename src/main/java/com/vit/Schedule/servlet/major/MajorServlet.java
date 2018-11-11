@@ -1,4 +1,4 @@
-package com.vit.Schedule.servlet;
+package com.vit.Schedule.servlet.major;
 
 import java.io.IOException;
 import java.util.HashMap;

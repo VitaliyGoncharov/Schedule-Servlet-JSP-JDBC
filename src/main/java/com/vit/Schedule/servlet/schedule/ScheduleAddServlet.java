@@ -1,6 +1,7 @@
 package com.vit.Schedule.servlet.schedule;
 
-import java.io.IOException;
+import static com.vit.Schedule.util.ServletUtils.sendResponse;
+
 import java.io.PrintWriter;
 
 import javax.servlet.annotation.WebServlet;
@@ -10,15 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vit.Schedule.model.Day;
 import com.vit.Schedule.model.Group;
 import com.vit.Schedule.model.Major;
 import com.vit.Schedule.model.Schedule;
 import com.vit.Schedule.model.Subject;
 import com.vit.Schedule.model.Teacher;
-import com.vit.Schedule.response.Response;
 import com.vit.Schedule.service.DayService;
 import com.vit.Schedule.service.GroupService;
 import com.vit.Schedule.service.ScheduleService;
@@ -51,26 +49,18 @@ public class ScheduleAddServlet extends HttpServlet {
 		String classroom = request.getParameter("classroom");
 		String weekStr = null;
 		String lessonTypeStr = null;
-		PrintWriter out = null;
-		
-		try {
-			out = response.getWriter();
-		} catch (IOException e) {
-			log.error("Failed to get writer" + e);
-			return;
-		}
 		
 		DayService dayService = new DayServiceImpl();
 		Day day = dayService.findByOrderNum(dayOrderNum);
 		// check day order number | Required
 		if (day == null || dayOrderNum < 1 || dayOrderNum > 7) {
-			sendResponse(500, "Day number must be from 1 to 7", out);
+			sendResponse(500, "Day number must be from 1 to 7", response);
 			return;
 		}
 		
 		// check week type | Required
 		if (week != 1 && week != 2) {
-			sendResponse(500, "Week can be set only by 1(up) and 2(down)", out);
+			sendResponse(500, "Week can be set only by 1(up) and 2(down)", response);
 			return;
 		}
 		
@@ -80,7 +70,7 @@ public class ScheduleAddServlet extends HttpServlet {
 		
 		// check lesson order number | Required
 		if (lessonNum > 7 || lessonNum < 1) {
-			sendResponse(500, "Lesson number must be from 1 to 7", out);
+			sendResponse(500, "Lesson number must be from 1 to 7", response);
 			return;
 		}
 		
@@ -89,7 +79,7 @@ public class ScheduleAddServlet extends HttpServlet {
 		Subject subject = subjectService.findById(subjectId);
 		
 		if (subject == null) {
-			sendResponse(500, "Subject can't be null", out);
+			sendResponse(500, "Subject can't be null", response);
 			return;
 		}
 		
@@ -104,7 +94,7 @@ public class ScheduleAddServlet extends HttpServlet {
 		Group group = groupService.findById(groupId);
 		
 		if (group == null) {
-			sendResponse(500, "Group can't be null!", out);
+			sendResponse(500, "Group can't be null!", response);
 			return;
 		}
 		
@@ -123,20 +113,8 @@ public class ScheduleAddServlet extends HttpServlet {
 		
 		ScheduleService scheduleService = new ScheduleServiceImpl();
 		scheduleService.add(schedule);
-		sendResponse(200, "Schedule was successfully added!", out);
+		sendResponse(200, "Schedule was successfully added!", response);
 	}
 	
-	private void sendResponse(int status, String msg, PrintWriter out) {
-		Response customResponse = new Response();
-		customResponse.setStatus(status);
-		customResponse.setMessage(msg);
-		
-		ObjectMapper objectMapper = new ObjectMapper();
-		try {
-			out.append(objectMapper.writeValueAsString(customResponse));
-		} catch (JsonProcessingException e) {
-			log.error("Couldn't generate JSON" + e);
-		}
-		out.flush();
-	}
+	
 }

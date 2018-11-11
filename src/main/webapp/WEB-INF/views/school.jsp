@@ -25,17 +25,28 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<div class="modal-body major-model-body" data-school="${schoolId}">
+			<div class="modal-body major-model-body" data-school-id="${schoolId}">
 				<form>
-					<div class="form-group" id="subject">
+					<div class="form-group">
 						<label for="major-title" class="col-form-label">Специальность:</label>
 						<input type="text" class="form-control" id="major-title">
+					</div>
+					<div class="form-group">
+						<label for="major-duration" class="col-form-label">Длительность обучения:</label>
+						<select class="custom-select" id="major-duration">
+							<option value="1" selected>1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+						</select>
 					</div>
 				</form>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
-				<button type="button" class="btn btn-primary add-major">Добавить</button>
+				<button type="button" class="btn btn-primary add-major-btn">Добавить</button>
 			</div>
 		</div>
 	</div>

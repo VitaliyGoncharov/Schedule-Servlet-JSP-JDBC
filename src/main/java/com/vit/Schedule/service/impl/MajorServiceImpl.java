@@ -125,4 +125,29 @@ public class MajorServiceImpl implements MajorService {
 		
 		return major;
 	}
+
+	@Override
+	public void add(Major major) {
+		Connection connection = JdbcConnection.getConnection();
+		PreparedStatement statement = null;
+		String sql = "INSERT INTO major (title,url,duration,school) VALUES (?,?,?,?)";
+		
+		try {
+			statement = connection.prepareStatement(sql);
+			statement.setString(1, major.getTitle());
+			statement.setString(2, major.getUrl());
+			statement.setInt(3, major.getDuration());
+			statement.setInt(4, major.getSchool().getId());
+			int insertedRows = statement.executeUpdate();
+			
+			if (insertedRows == 0) {
+				throw new SQLException("Coudn't insert new major!");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DbUtils.closeQuietly(statement);
+			DbUtils.closeQuietly(connection);
+		}
+	}
 }
