@@ -207,4 +207,43 @@ public class ScheduleServiceImpl implements ScheduleService {
 			DbUtils.closeQuietly(connection);
 		}
 	}
+	
+	@Override
+	public void add(Schedule schedule) {
+		Connection connection = JdbcConnection.getConnection();
+		PreparedStatement statement = null;
+		String sql = new StringBuilder()
+				.append("INSERT INTO schedule ")
+				.append("(subject,day_num,week,subject_num,major,group_id,teacher,lesson_type,classroom)")
+				.append(" VALUES (?,?,?,?,?,?,?,?,?)")
+				.toString();
+		
+		try {
+			Teacher teacher = schedule.getTeacher();
+			statement = connection.prepareStatement(sql);
+			statement.setInt(1, schedule.getSubject().getId());
+			statement.setInt(2, schedule.getDay().getOrderNum());
+			statement.setString(3, schedule.getWeek());
+			statement.setInt(4, schedule.getSubject_num());
+			statement.setInt(5, schedule.getMajor().getId());
+			statement.setInt(6, schedule.getGroup().getId());
+			if (teacher.getId() != 0) {
+				statement.setInt(7, teacher.getId());
+			} else {
+				statement.setNull(7, Types.INTEGER);
+			}
+			statement.setString(8, schedule.getLessonType());
+			statement.setString(9, schedule.getClassroom());
+			int rowsInserted = statement.executeUpdate();
+			
+			if (rowsInserted == 0) {
+				throw new SQLException("Data wasn't inserted!");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DbUtils.closeQuietly(statement);
+			DbUtils.closeQuietly(connection);
+		}
+	}
 }

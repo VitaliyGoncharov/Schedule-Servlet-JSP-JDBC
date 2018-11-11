@@ -10,5 +10,6 @@
 <script src="<c:url value="/js/popper/popper.js"/>"></script>
 <script src="<c:url value="/js/bootstrap/bootstrap.min.js"/>"></script>
 <script src="<c:url value="/js/schedule.js"/>"></script>
+<script src="<c:url value="/js/school.js"/>"></script>
 </body>
 </html>

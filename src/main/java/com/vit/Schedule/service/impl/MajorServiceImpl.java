@@ -6,7 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import com.vit.Schedule.model.Major;
 import com.vit.Schedule.model.School;
@@ -16,7 +17,7 @@ import com.vit.Schedule.util.DbUtils;
 import com.vit.Schedule.util.JdbcConnection;
 
 public class MajorServiceImpl implements MajorService {
-	private static Logger log = Logger.getLogger(MajorServiceImpl.class.getName());
+	private static Logger log = Logger.getLogger(MajorServiceImpl.class);
 	
 	public MajorServiceImpl() {
 	}

@@ -23,11 +23,11 @@ $(".edit-schedule-btn").on('click', function(e) {
 				$('#classroom').val(schedule.classroom);
 				
 				Promise.all([
-					insertSubjects(schedule.subject.id),
-					insertTeachers(schedule.teacher.id)
+					insertSubjects(schedule.subject.id, "#subject-names"),
+					insertTeachers(schedule.teacher.id, "#teachers")
 				]).then(
 					result => {
-						$(".modal").modal('show');
+						$("#editScheduleModal").modal('show');
 					},
 					error => {
 						console.err(error);
@@ -75,7 +75,7 @@ function sortTeachers(teachers) {
 	});
 }
 
-function insertSubjects(currentSubjectId) {
+function insertSubjects(currentSubjectId, targetElem) {
 	return new Promise(function(res,rej) {
 		getSubjects()
 			.then(
@@ -87,7 +87,7 @@ function insertSubjects(currentSubjectId) {
 							preparedSubject += ' selected';
 						}
 						preparedSubject += '>' + subject.title + '</option';
-						$('#subject-names').append(preparedSubject);
+						$(targetElem).append(preparedSubject);
 					}
 					return res();
 				},
@@ -117,7 +117,7 @@ function getSubjects(subjects) {
 	});
 }
 
-function insertTeachers(currentTeacherId) {
+function insertTeachers(currentTeacherId, targetElem) {
 	return new Promise(function(res, rej) {
 		getTeachers()
 			.then(
@@ -125,10 +125,10 @@ function insertTeachers(currentTeacherId) {
 					teachers = sortTeachers(teachers);
 					if (currentTeacherId == 0) {
 						let emptyOption = '<option value="0" selected>Выбрать преподавателя</option>';
-						$("#teachers").append(emptyOption);
+						$(targetElem).append(emptyOption);
 					} else {
 						let emptyOption = '<option value="0">Выбрать преподавателя</option>';
-						$("#teachers").append(emptyOption);
+						$(targetElem).append(emptyOption);
 					}
 					for (let teacher of teachers) {
 						let preparedTeacher = '<option value="' + teacher.id + '"';
@@ -137,7 +137,7 @@ function insertTeachers(currentTeacherId) {
 						}
 						preparedTeacher += '>' + teacher.lastname + ' ' + teacher.firstname + ' ' + teacher.middlename;
 						preparedTeacher += '</option>';
-						$("#teachers").append(preparedTeacher);
+						$(targetElem).append(preparedTeacher);
 					}
 					
 					return res();
@@ -249,6 +249,78 @@ function deleteScheduleReq(id) {
 					return rej("deleteScheduleReq() Internal error | Couldn't delete schedule");
 				} else {
 					return rej("deleteSchedulReq() Unexpected error");
+				}
+			}
+		});
+	});
+}
+
+$(".show-add-schedule-form").on('click', function(e) {
+	let target = e.target;
+	$('#add-schedule_subject-types').val(0);
+	let dayNum = target.closest("table").dataset.dayNum;
+	$(".addScheduleModelBody").attr('data-day-num', dayNum);
+	
+	Promise.all([
+		insertSubjects(0, "#add-schedule_subject-names"),
+		insertTeachers(0, "#add-schedule_teachers")
+	]).then(
+		result => {
+			$("#addScheduleModal").modal('show');
+		},
+		error => {
+			console.err(error);
+		});
+});
+
+$(".add-schedule-btn").on('click', function(e) {
+	let target = e.target;
+	let dayNum = $(".addScheduleModelBody").attr("data-day-num");
+	let groupId = $(".addScheduleModelBody").attr("data-group-id");
+	let week = $("#add-schedule_week-type").val();
+	let lessonNum = $("#add-schedule_lesson-order-number").val();
+	let subject = $("#add-schedule_subject-names").val();
+	let lessonType = $("#add-schedule_subject-types").val();
+	let teacher = $("#add-schedule_teachers").val();
+	let classroom = $("#add-schedule_classroom").val();
+	
+	let obj = {
+		group: groupId,
+		day: dayNum,
+		week: week,
+		lessonNum: lessonNum,
+		subject: subject,
+		lessonType: lessonType,
+		teacher: teacher,
+		classroom: classroom
+	};
+	
+	addScheduleReq(obj)
+		.then(
+			success => {
+				console.log("Success");
+				$("#addScheduleModal").modal('hide');
+			},
+			error => {
+				console.error(error);
+			});
+});
+
+function addScheduleReq(obj) {
+	return new Promise((res,rej) => {
+		$.ajax({
+			type: 'POST',
+			url: '/Schedule/api/schedule/add',
+			data: obj,
+			dataType: 'json',
+			success: function(response) {
+				return res(response);
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				if (jqXHR.status == 500) {
+					return rej("addScheduleReq(obj) Internal error | Couldn't add schedule!");
+				} else {
+					return rej("addScheduleReq(obj) Unexpected error");
 				}
 			}
 		});

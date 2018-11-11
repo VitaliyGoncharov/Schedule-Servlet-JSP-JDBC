@@ -17,4 +17,5 @@ public interface ScheduleService {
 	void updateClassroom(String classroom, Schedule schedule);
 	
 	void delete(int id);
+	void add(Schedule schedule);
 }

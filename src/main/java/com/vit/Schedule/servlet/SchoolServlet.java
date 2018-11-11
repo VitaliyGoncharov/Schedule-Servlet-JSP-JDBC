@@ -25,7 +25,7 @@ public class SchoolServlet extends HttpServlet {
 		String schoolUrl = (String) request.getAttribute("school");
 		SchoolServiceImpl schoolService = new SchoolServiceImpl();
 		School school = schoolService.findByUrl(schoolUrl);
-			
+		
 		List<Major> majors = null;
 		try {
 			MajorServiceImpl majorService = new MajorServiceImpl(); 
@@ -38,6 +38,7 @@ public class SchoolServlet extends HttpServlet {
 		}
 		
 		request.setAttribute("majors", majors);
+		request.setAttribute("schoolId", school.getId());
 		RequestDispatcher dispatcher = request.getRequestDispatcher(
 		          "/WEB-INF/views/school.jsp");
         dispatcher.forward(request, response);

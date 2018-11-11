@@ -1,4 +1,4 @@
-package com.vit.Schedule.servlet;
+package com.vit.Schedule.servlet.schedule;
 
 import java.io.IOException;
 import java.io.PrintWriter;

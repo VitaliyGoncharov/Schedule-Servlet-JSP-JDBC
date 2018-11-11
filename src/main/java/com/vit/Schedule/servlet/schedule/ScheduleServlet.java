@@ -1,4 +1,4 @@
-package com.vit.Schedule.servlet;
+package com.vit.Schedule.servlet.schedule;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 import com.vit.Schedule.model.Day;
 import com.vit.Schedule.model.Group;
 import com.vit.Schedule.model.Schedule;
@@ -23,38 +21,26 @@ import com.vit.Schedule.service.impl.GroupServiceImpl;
 import com.vit.Schedule.service.impl.ScheduleServiceImpl;
 import com.vit.Schedule.util.ScheduleUtils;
 
-@WebServlet("/schedule/edit/*")
-public class ScheduleEditPageServlet extends HttpServlet {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3856471666504763119L;
-	private static Logger log = Logger.getLogger(ScheduleEditPageServlet.class);
+@WebServlet(
+	name = "ScheduleServlet",
+	urlPatterns = "/schedule/*")
+public class ScheduleServlet extends HttpServlet {
+	private static final long serialVersionUID = 1880295393595205856L;
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String url = request.getPathInfo();
-		String[] urlParts = url.split("/");
-		int groupId;
-		try {
-			groupId = Integer.parseInt(urlParts[urlParts.length-1]);	
-		} catch (NumberFormatException e) {
-			log.error("Incorrect format of groupId in url" + e);
-			return;
-		}
+		String reqUrl = request.getPathInfo();
+		String[] reqUrlParts = reqUrl.split("/");
+		int groupId = Integer.parseInt(reqUrlParts[1]);
 		
 		GroupService groupService = new GroupServiceImpl();
 		Group group = groupService.findById(groupId);
 		
 		ScheduleService scheduleService = new ScheduleServiceImpl();
 		List<Schedule> schedules = scheduleService.findAllByGroup(group);
-		
-		Map<Day, List<Schedule>> mappedSchedules = ScheduleUtils.mapToDays2(schedules);
-		mappedSchedules = ScheduleUtils.sortByDay2(mappedSchedules);
-		mappedSchedules = ScheduleUtils.sortByLesson(mappedSchedules);
-		mappedSchedules = ScheduleUtils.sortByWeek(mappedSchedules);
-		request.setAttribute("schedules", mappedSchedules);
+		Map<Day, Map<Integer, Map<String, Map<String,String>>>> schedulesByDays = ScheduleUtils.mapToDays(schedules);
+		schedulesByDays = ScheduleUtils.sortByDay1(schedulesByDays);
+		request.setAttribute("schedulesByDays", schedulesByDays);
 		
 		Map<Integer, String> bellSchedule = new HashMap<>();
 		bellSchedule.put(1, "8.30-10.00");
@@ -63,15 +49,9 @@ public class ScheduleEditPageServlet extends HttpServlet {
 		bellSchedule.put(4, "13.30-15.00");
 		bellSchedule.put(5, "15.10-16.40");
 		bellSchedule.put(6, "16.50-18.20");
-		
 		request.setAttribute("bellSchedule", bellSchedule);
 		
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/scheduleEditPage.jsp");
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/schedule.jsp");
 		dispatcher.forward(request, response);
-	}
-
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		super.doPost(req, resp);
 	}
 }
