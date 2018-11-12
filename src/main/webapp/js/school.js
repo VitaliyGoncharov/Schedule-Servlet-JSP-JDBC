@@ -1,4 +1,4 @@
-$("#show-add-major-model-btn").on('click', function(e) {
+$("#show-add-major-modal-btn").on('click', function(e) {
 	$("#addMajorModal").modal('show');
 });
 

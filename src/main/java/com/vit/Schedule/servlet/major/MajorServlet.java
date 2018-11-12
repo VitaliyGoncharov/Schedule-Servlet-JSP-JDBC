@@ -44,6 +44,7 @@ public class MajorServlet extends HttpServlet {
 			}
 		}
 		request.setAttribute("courseToGroupsMap", courseToGroupsMap);
+		request.setAttribute("majorId", major.getId());
 		
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/major.jsp");
 		dispatcher.forward(request, response);

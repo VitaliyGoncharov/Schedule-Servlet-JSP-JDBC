@@ -50,6 +50,7 @@ public class ScheduleServlet extends HttpServlet {
 		bellSchedule.put(5, "15.10-16.40");
 		bellSchedule.put(6, "16.50-18.20");
 		request.setAttribute("bellSchedule", bellSchedule);
+		request.setAttribute("groupId", groupId);
 		
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/schedule.jsp");
 		dispatcher.forward(request, response);

@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.vit.Schedule.model.Day;
 import com.vit.Schedule.model.Schedule;
@@ -222,5 +223,29 @@ public class ScheduleUtils {
 		}
 		
 		return sortedDaysMap;
+	}
+	
+	public static Map<Day, List<Schedule>> addEmptyDays(Map<Day, List<Schedule>> daysMap, List<Day> days) {
+		int[] daysNums = {1, 2, 3, 4, 5, 6 };
+		for (int i = 0; i < daysNums.length; i++) {
+			int curDayNum = daysNums[i];
+			
+			boolean dayExists = daysMap.entrySet().stream()
+				.filter(x -> {
+					return x.getKey().getOrderNum() == curDayNum;
+				})
+				.findFirst().isPresent();
+			
+			if (!dayExists) {
+				Day day = days.stream()
+					.filter(x -> {
+						return x.getOrderNum() == curDayNum;
+					})
+					.findFirst().get();
+				
+				daysMap.put(day, new ArrayList<>());
+			}
+		}
+		return daysMap;
 	}
 }

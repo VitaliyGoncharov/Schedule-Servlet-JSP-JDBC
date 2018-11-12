@@ -4,14 +4,17 @@
 <jsp:include page="layouts/_header.jsp"></jsp:include>
 
 <c:if test="${schedulesByDays.isEmpty()}">
-	<div align="center" style="font-size: 1.2em"><b>Расписание отсутствует!</b></div>
+	<div align="center" style="font-size: 1.2em">
+		<b>Расписание отсутствует!</b><br>
+		<a href="<c:url value="/schedule/edit/${groupId}"/>">Добавить</a>
+	</div>
 </c:if>
 
 <c:if test="${!schedulesByDays.isEmpty()}">
 	<div id="schedule-container">
 		<div id="schedule">
 			<div style="position: absolute; top:0; left:102%;">
-				<a href="<c:url value="/schedule/edit/1"/>">Изменить</a>
+				<a href="<c:url value="/schedule/edit/${groupId}"/>">Изменить</a>
 			</div>
 			<table border="1" data-group-id="${groupId}">
 				<tbody>

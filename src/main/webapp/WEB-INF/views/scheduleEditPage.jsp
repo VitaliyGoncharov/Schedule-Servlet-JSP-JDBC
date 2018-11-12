@@ -4,7 +4,7 @@
 <jsp:include page="layouts/_header.jsp"></jsp:include>
 
 <c:out value="${schedules}" />
-<c:forEach items="${schedules.entrySet()}" var="dayEntry">
+<c:forEach items="${schedules.entrySet()}" var="dayEntry" varStatus="loop">
 	<c:set var="day" value="${dayEntry.getKey()}" />
 	<c:set var="schedules" value="${dayEntry.getValue()}" />
 

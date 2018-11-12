@@ -17,8 +17,10 @@ import org.apache.log4j.Logger;
 import com.vit.Schedule.model.Day;
 import com.vit.Schedule.model.Group;
 import com.vit.Schedule.model.Schedule;
+import com.vit.Schedule.service.DayService;
 import com.vit.Schedule.service.GroupService;
 import com.vit.Schedule.service.ScheduleService;
+import com.vit.Schedule.service.impl.DayServiceImpl;
 import com.vit.Schedule.service.impl.GroupServiceImpl;
 import com.vit.Schedule.service.impl.ScheduleServiceImpl;
 import com.vit.Schedule.util.ScheduleUtils;
@@ -52,9 +54,14 @@ public class ScheduleEditPageServlet extends HttpServlet {
 		List<Schedule> schedules = scheduleService.findAllByGroup(group);
 		
 		Map<Day, List<Schedule>> mappedSchedules = ScheduleUtils.mapToDays2(schedules);
+		DayService dayService = new DayServiceImpl();
+		List<Day> days = dayService.findAll();
+		mappedSchedules = ScheduleUtils.addEmptyDays(mappedSchedules, days);
+		
 		mappedSchedules = ScheduleUtils.sortByDay2(mappedSchedules);
 		mappedSchedules = ScheduleUtils.sortByLesson(mappedSchedules);
 		mappedSchedules = ScheduleUtils.sortByWeek(mappedSchedules);
+		
 		request.setAttribute("schedules", mappedSchedules);
 		
 		Map<Integer, String> bellSchedule = new HashMap<>();

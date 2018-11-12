@@ -13,7 +13,7 @@
 		</c:forEach>
 	</c:if>
 </ul>
-<button id="show-add-major-model-btn" class="btn btn-success">Добавить специальность</button>
+<button id="show-add-major-modal-btn" class="btn btn-success">Добавить специальность</button>
 
 <div class="modal" id="addMajorModal" tabindex="-1" role="dialog"
 	aria-labelledby="addMajorModalLabel" aria-hidden="true">

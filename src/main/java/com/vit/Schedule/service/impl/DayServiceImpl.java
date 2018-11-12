@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.vit.Schedule.model.Day;
 import com.vit.Schedule.service.DayService;
@@ -70,5 +72,36 @@ public class DayServiceImpl implements DayService {
 		}
 		
 		return day;
+	}
+	
+	@Override
+	public List<Day> findAll() {
+		List<Day> days = new ArrayList<>();
+		
+		Connection connection = JdbcConnection.getConnection();
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		String sql = "SELECT * FROM day";
+		
+		try {
+			statement = connection.prepareStatement(sql);
+			resultSet = statement.executeQuery();
+			
+			while (resultSet.next()) {
+				Day day = new Day();
+				day.setId(resultSet.getInt("id"));
+				day.setName(resultSet.getString("name"));
+				day.setOrderNum(resultSet.getInt("order_num"));
+				days.add(day);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DbUtils.closeQuietly(resultSet);
+			DbUtils.closeQuietly(statement);
+			DbUtils.closeQuietly(connection);
+		}
+		
+		return days;
 	}
 }
