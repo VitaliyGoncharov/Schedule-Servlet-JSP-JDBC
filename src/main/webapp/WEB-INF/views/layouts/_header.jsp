@@ -5,8 +5,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>University Schedule</title>
-<link rel="stylesheet" href="<c:url value="/css/bootstrap/bootstrap.css"/>">
-<link rel="stylesheet" href="<c:url value="/css/fontawesome/css/all.css"/>">
+<link rel="stylesheet" href="<c:url value="/css/bootstrap/bootstrap.min.css"/>">
+<link rel="stylesheet" href="<c:url value="/css/fontawesome/css/all.min.css"/>">
 <link rel="stylesheet" href="<c:url value="/css/main.css" />">
 </head>
 <body>
